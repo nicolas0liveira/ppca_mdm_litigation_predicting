@@ -1,0 +1,16 @@
+Campo,Descrição
+CPF_CNPJ,CPF ou CNPJ do devedor inscrito na dívida ativa.
+TIPO_PESSOA,Indica se o devedor é pessoa física (F) ou jurídica (J).
+TIPO_DEVEDOR,"Categoria do devedor: contribuinte individual, empresa, órgão público etc."
+NOME_DEVEDOR,Nome ou razão social do devedor.
+UF_DEVEDOR,Unidade da Federação (estado) do devedor.
+UNIDADE_RESPONSAVEL,Unidade da PGFN responsável pela inscrição da dívida.
+NUMERO_INSCRICAO,Número único da inscrição da dívida ativa.
+TIPO_SITUACAO_INSCRICAO,"Tipo da situação da inscrição: ativa, suspensa, extinta etc."
+SITUACAO_INSCRICAO,Descrição detalhada da situação atual da dívida.
+TIPO_CREDITO,"Tipo de crédito tributário ou não tributário (ex: FGTS, Multas)."
+DATA_INSCRICAO,Data da inscrição na dívida ativa.
+INDICADOR_AJUIZADO,Indica se a dívida foi ajuizada: 'S' ou 'N'.
+VALOR_CONSOLIDADO,Valor total da dívida com acréscimos legais.
+ENTIDADE_RESPONSAVEL,Entidade que gerou a inscrição do débito FGTS.
+UNIDADE_INSCRICAO,Unidade/agência que realizou a inscrição do débito FGTS.

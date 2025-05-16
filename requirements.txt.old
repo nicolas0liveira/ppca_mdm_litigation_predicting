@@ -1,0 +1,42 @@
+# Web scraping
+requests
+beautifulsoup4
+tqdm
+
+# Data I/O e processamento
+pyarrow
+s3fs
+jinja2 
+joblib
+argparse
+loguru
+python-dotenv
+pydantic
+
+# Grafos e visualização
+networkx
+pygraphviz
+plotly
+
+# ML & Otimização
+scipy
+xgboost
+optuna
+scikit-learn
+dask-ml
+
+# Dask e dependências específicas dos workers
+dask[distributed,dataframe]==2025.4.1
+distributed==2025.4.1
+numpy==2.2.5
+pandas==2.2.3
+
+# Outras dependências usadas por dask
+toolz==0.12.0
+lz4==4.3.3
+
+
+#Henrique
+# pip install dask[complete] dask-ml dask-cuda distributed \
+# xgboost optuna scikit-learn matplotlib \
+# numpy pandas zarr h5py joblib torch

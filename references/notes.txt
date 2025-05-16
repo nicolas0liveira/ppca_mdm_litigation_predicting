@@ -1,0 +1,53 @@
+
+
+## DADOS
+
+| Campo                     | Tipo de Dado               | Observação                                                                |
+|---------------------------|----------------------------|---------------------------------------------------------------------------|
+| CPF_CNPJ                  | Identificador              | Identificador único, não usar como variável explicativa                   |
+| TIPO_PESSOA               | Categórico                 | Categoria como "Física" ou "Jurídica"                                     |
+| TIPO_DEVEDOR              | Categórico                 | Tipos como "Principal", "Solidário" etc.                                  |
+| NOME_DEVEDOR              | Identificador / Categórico | Pode ser único; cuidado com cardinalidade alta                            |
+| UF_UNIDADE_RESPONSAVEL    | Categórico                 | Unidade federativa                                                        |
+| UNIDADE_RESPONSAVEL       | Categórico                 | Nome da unidade                                                           |
+| ENTIDADE_RESPONSAVEL      | Categórico                 | Entidade administrativa responsável                                       |
+| UNIDADE_INSCRICAO         | Categórico                 | Unidade que realizou a inscrição                                          |
+| NUMERO_INSCRICAO          | Identificador              | Número único da inscrição                                                 |
+| TIPO_SITUACAO_INSCRICAO   | Categórico                 | Tipo de situação, como "Normal", "Suspensa" etc.                          |
+| SITUACAO_INSCRICAO        | Categórico                 | Situação atual da inscrição                                               |
+| RECEITA_PRINCIPAL         | Categórico                 | Tipo de receita associada                                                 |
+| DATA_INSCRICAO            | Data (datetime)            | Ideal converter para datetime para análises temporais                     |
+| INDICADOR_AJUIZADO        | Categórico                 | Ex: "SIM" ou "NÃO"                                                        |
+| VALOR_CONSOLIDADO         | Numérico Contínuo          | Valor monetário, usar com escala e análise estatística adequada           |
+
+
+
+## Observações:
+
+1. Existem INDICADOR_AJUIZADO=SIM para as seguintes SITUACAO_INSCRICAO (AJUIZ PARCELADA,AJUIZADA,EMBARGADA,OUTROS AJUIZADA)
+
+                           NAO     SIM
+    AJUIZ PARCELADA          0   14984
+    AJUIZADA                 0  693916
+    EMBARGADA                0    1757
+    ENC PROTESTO             5       0
+    INSCR PARCELADA       7485       0
+    INSCRITA            152510       0
+    OUTROS AJUIZADA          0     140
+    OUTROS INSCRITA        146       0
+    PETICIONADA          11224       0
+    TRANSFERIDA             31       0
+
+
+2. O campo VALOR_CONSOLIDADO possui valores extremos: 0.03, 0.1 e valores extremamente altos.  Ideal seria criar faixas
+
+
+3. Tem inscricao que estavam como SIM e voltaram para NAO: FGGO201000004. Percebi que isso pode acontecer
+
+
+
+
+Conversa Denise
+. Será que o CNPJ já foi ajuizado antes?
+. A PGFN tem 5 anos para mandar para ajuizamento (depois prescreve)
+. Se negocia (parcela) o processo é suspenso

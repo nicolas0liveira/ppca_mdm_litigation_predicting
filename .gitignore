@@ -172,3 +172,19 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+
+docker/minio_data/
+docker/spark_data/
+docker/mlflow_data/
+
+data/raw/
+data/external/
+data/interimediate/
+data/processed/
+venv/
+output/
+__pycache__
+reports/**.*
+!reports/.gitkeep

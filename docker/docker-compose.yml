@@ -1,0 +1,116 @@
+services:
+
+  # MLflow Tracking Server
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow
+    ports:
+      - "5000:5000"
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - ./mlflow_data:/mlflow_data
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow_data/mlflow.db
+      --default-artifact-root s3://ppca/mlflow/
+      --host 0.0.0.0
+    depends_on:
+      - minio
+    networks:
+      - dasknet
+
+  # Configuração do MINIO
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - ./minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - dasknet
+
+  minio-init:
+    image: minio/mc
+    volumes:
+      # - ./minio_seed:/seed
+      - /home/nicolas/Documents/dados/pgfn/docker_seed/mdm:/seed/mdm
+    depends_on:
+      - minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Aguardando MinIO aceitar conexões...';
+        until mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin123}; do
+        echo 'Ainda não pronto, tentando novamente em 3s...';
+          sleep 3;
+        done;
+        echo 'Conexão bem-sucedida!';
+
+        # Criar buckets se não existirem
+        mc ls local/ppca || mc mb local/ppca;
+
+        # Tornar públicos para leitura
+        mc anonymous set download local/ppca;
+
+        # Subir arquivos
+        mc cp --recursive /seed/mdm local/ppca;
+        mc mb local/ppca/mlflow || echo 'Bucket mlflow já existe';
+        echo 'Arquivos enviados com sucesso.';
+        exit 0;
+      "
+    networks:
+      - dasknet
+
+  jupyter:
+    container_name: jupyter
+    image: daskdev/dask:latest
+    command: jupyter lab --ip=0.0.0.0 --allow-root --no-browser
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    depends_on:
+      - scheduler
+    networks:
+      - dasknet
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+
+  scheduler:
+    container_name: dask-scheduler
+    image: daskdev/dask:latest
+    command: dask scheduler
+    ports:
+      - "8786:8786"  # porta para workers
+      - "8787:8787"  # dashboard web
+    networks:
+      - dasknet
+
+  worker:
+    container_name: dask-worker
+    image: daskdev/dask:latest
+    command: dask worker tcp://scheduler:8786
+    networks:
+      - dasknet
+
+  worker2:
+    container_name: dask-worker2
+    image: daskdev/dask:latest
+    command: dask worker tcp://scheduler:8786
+    networks:
+      - dasknet
+
+networks:
+  dasknet:
+    driver: bridge
