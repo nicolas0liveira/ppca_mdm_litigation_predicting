@@ -1,5 +1,6 @@
 services:
-
+        # pip install --upgrade pip &&
+        # python -m pip install boto3 &&
   # MLflow Tracking Server
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
@@ -12,11 +13,13 @@ services:
       AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
     volumes:
       - ./mlflow_data:/mlflow_data
-    command: >
-      mlflow server
-      --backend-store-uri sqlite:///mlflow_data/mlflow.db
-      --default-artifact-root s3://ppca/mlflow/
-      --host 0.0.0.0
+    # entrypoint: >
+    #     mlflow server
+    #       --backend-store-uri sqlite:///mlflow_data/mlflow.db
+    #       --default-artifact-root s3://ppca/mlflow/
+    #       --host 0.0.0.0
+    entrypoint: /bin/sh -c "pip install --upgrade pip --break-system-packages && python -m pip install boto3 --break-system-packages && mlflow server --backend-store-uri sqlite:///mlflow_data/mlflow.db --default-artifact-root s3://ppca/mlflow/ --host 0.0.0.0"
+
     depends_on:
       - minio
     networks:

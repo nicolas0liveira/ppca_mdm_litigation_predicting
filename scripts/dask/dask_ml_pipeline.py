@@ -13,19 +13,47 @@ import mlflow
 import mlflow.sklearn
 from loguru import logger
 from dask import delayed
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 load_dotenv()
 
+# Configurações para Dask acessar dados no S3 / MinIO
 DASK_STORAGE_OPTIONS = {
     "key": os.getenv("AWS_ACCESS_KEY_ID"),
     "secret": os.getenv("AWS_SECRET_ACCESS_KEY"),
     "client_kwargs": {
-        "endpoint_url": os.getenv("MINIO_ENDPOINT")
+        "endpoint_url": os.getenv("MINIO_ENDPOINT"),
+        "region_name": os.getenv("AWS_DEFAULT_REGION", "us-east-1"),
     }
 }
 
-NOW = time.strftime("%Y%m%d_%H%M%S")
+# Configurações para boto3 (upload para S3)
+S3_BUCKET = os.getenv("S3_BUCKET")
+S3_ENDPOINT = os.getenv("MINIO_ENDPOINT")
+S3_KEY = os.getenv("AWS_ACCESS_KEY_ID")
+S3_SECRET = os.getenv("AWS_SECRET_ACCESS_KEY")
+
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+
+NOW = time.strftime("%Y%m%d_%H%M%S")
+
+
+def upload_file_to_s3(local_path: str, s3_key: str):
+    """Faz upload de arquivo local para bucket S3/MinIO"""
+    s3_client = boto3.client(
+        "s3",
+        endpoint_url=S3_ENDPOINT,
+        aws_access_key_id=S3_KEY,
+        aws_secret_access_key=S3_SECRET,
+        region_name=os.getenv("AWS_DEFAULT_REGION", "us-east-1"),
+    )
+    try:
+        s3_client.upload_file(local_path, S3_BUCKET, s3_key)
+        logger.info(f"Arquivo {local_path} enviado para s3://{S3_BUCKET}/{s3_key}")
+    except NoCredentialsError:
+        logger.error("Credenciais AWS não encontradas para upload S3.")
+        raise
 
 
 @delayed
@@ -135,9 +163,13 @@ def run_pipeline(parquet_s3path, target_column, experiment_name, client, execute
 
     # Apenas para gerar DAG da parte delayed
     final_task = delayed(lambda *args: None, name="FinalTask")(model, scaler, acc)
-    dag_filename = f"../../reports/{NOW}_pipeline_dag_logistic"
-    final_task.visualize(filename=dag_filename, format="svg", title="Pipeline DAG")
-    logger.info(f"DAG salva em {dag_filename}")
+    local_dag_path = f"./reports/{NOW}_pipeline_dag_logistic.svg"
+    final_task.visualize(filename=local_dag_path, title="Pipeline DAG")
+    logger.info(f"DAG salva localmente em {local_dag_path}")
+
+    # Faz upload do SVG para o S3
+    s3_dag_key = f"reports/{NOW}_pipeline_dag_logistic.svg"
+    upload_file_to_s3(local_dag_path, s3_dag_key)
 
     if execute:
         # Executa e obtém resultados concretos
@@ -166,13 +198,13 @@ if __name__ == "__main__":
         cluster = LocalCluster(dashboard_address=":9090")
         client = Client(cluster)
 
-        print("Dask Client iniciado:")
-        print(client)
+        logger.info("Dask Client iniciado:")
+        logger.info(client)
 
         run_pipeline(
             parquet_s3path="s3://ppca/mdm/pgfn/processed/simple_classification.parquet",
             target_column="label",
-            experiment_name="logistic_dask_pipeline",
+            experiment_name="mdm_classification_experiment",
             client=client,
             execute=args.execute
         )
