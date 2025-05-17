@@ -51,3 +51,17 @@ Conversa Denise
 . Será que o CNPJ já foi ajuizado antes?
 . A PGFN tem 5 anos para mandar para ajuizamento (depois prescreve)
 . Se negocia (parcela) o processo é suspenso
+
+
+
+
+TRansformações:
+numero_inscricao           → string → Remover ou ignorar (ID)
+idade_divida_dias          → double → OK
+tipo_devedor               → string → One-hot
+nm_porte                   → string → One-hot
+origem                     → string → One-hot
+situacao_inscricao         → string → One-hot
+nm_situacao_cadastral      → string → One-hot
+nm_regiao_politica         → string → One-hot
+target                     → string → Mapear para 0/1

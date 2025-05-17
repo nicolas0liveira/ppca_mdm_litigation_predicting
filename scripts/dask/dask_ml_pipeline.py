@@ -202,9 +202,10 @@ if __name__ == "__main__":
         logger.info(client)
 
         run_pipeline(
-            parquet_s3path="s3://ppca/mdm/pgfn/processed/simple_classification.parquet",
-            target_column="label",
-            experiment_name="mdm_classification_experiment",
+            # parquet_s3path="s3://ppca/mdm/pgfn/processed/simple_classification.parquet",
+            parquet_s3path="s3://ppca/mdm/pgfn/processed/dau_so_com9atributos_importantes_50NAOe50SIM.parquet",
+            target_column="target",
+            experiment_name="mdm_na_madrugada",
             client=client,
             execute=args.execute
         )
