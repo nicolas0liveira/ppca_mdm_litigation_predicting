@@ -1,0 +1,28 @@
+[MASTER]
+ignore=tests
+load-plugins=pylint.extensions.docparams
+
+[MESSAGES CONTROL]
+disable=
+    missing-function-docstring,
+    missing-class-docstring,
+    missing-module-docstring,
+    too-few-public-methods,
+    no-self-use,
+    too-many-arguments,
+    too-many-locals,
+    too-many-instance-attributes,
+
+
+[FORMAT]
+max-line-length=120
+
+[TYPECHECK]
+ignored-modules=fastapi,pydantic
+
+[DESIGN]
+max-args=7
+
+[REPORTS]
+output-format=colorized
+reports=no
