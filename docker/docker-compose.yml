@@ -75,44 +75,44 @@ services:
     networks:
       - dasknet
 
-  jupyter:
-    container_name: jupyter
-    image: daskdev/dask:latest
-    command: jupyter lab --ip=0.0.0.0 --allow-root --no-browser
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./notebooks:/home/jovyan/work
-    depends_on:
-      - scheduler
-    networks:
-      - dasknet
-    environment:
-      - JUPYTER_ENABLE_LAB=yes
+  # jupyter:
+  #   container_name: jupyter
+  #   image: daskdev/dask:latest
+  #   command: jupyter lab --ip=0.0.0.0 --allow-root --no-browser
+  #   ports:
+  #     - "8888:8888"
+  #   volumes:
+  #     - ./notebooks:/home/jovyan/work
+  #   depends_on:
+  #     - scheduler
+  #   networks:
+  #     - dasknet
+  #   environment:
+  #     - JUPYTER_ENABLE_LAB=yes
 
-  scheduler:
-    container_name: dask-scheduler
-    image: daskdev/dask:latest
-    command: dask scheduler
-    ports:
-      - "8786:8786"  # porta para workers
-      - "8787:8787"  # dashboard web
-    networks:
-      - dasknet
+  # scheduler:
+  #   container_name: dask-scheduler
+  #   image: daskdev/dask:latest
+  #   command: dask scheduler
+  #   ports:
+  #     - "8786:8786"  # porta para workers
+  #     - "8787:8787"  # dashboard web
+  #   networks:
+  #     - dasknet
 
-  worker:
-    container_name: dask-worker
-    image: daskdev/dask:latest
-    command: dask worker tcp://scheduler:8786
-    networks:
-      - dasknet
+  # worker:
+  #   container_name: dask-worker
+  #   image: daskdev/dask:latest
+  #   command: dask worker tcp://scheduler:8786
+  #   networks:
+  #     - dasknet
 
-  worker2:
-    container_name: dask-worker2
-    image: daskdev/dask:latest
-    command: dask worker tcp://scheduler:8786
-    networks:
-      - dasknet
+  # worker2:
+  #   container_name: dask-worker2
+  #   image: daskdev/dask:latest
+  #   command: dask worker tcp://scheduler:8786
+  #   networks:
+  #     - dasknet
 
 networks:
   dasknet:

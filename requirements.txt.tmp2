@@ -35,6 +35,17 @@ pandas==2.2.3
 toolz==0.12.0
 lz4==4.3.3
 
+mlflow
+loguru
+boto3
+setuptools
+lightgbm
+python-dotenv
+
+tempfile
+joblib
+optuna
+imblearn
 
 #Henrique
 # pip install dask[complete] dask-ml dask-cuda distributed \

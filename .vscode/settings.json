@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [
+        "./scripts/config",
+        "./scripts/models/decision_tree",
+        "./scripts/models/losgistic_regression",
+        "./scripts/metrics"
+    ]
+}

@@ -1,3 +1,15 @@
-DAU total  = Resultados (1,657,856)
+Laney, D. (2001)
+3D Data Management: Controlling Data Volume, Velocity and Variety.
+→ Artigo seminal da META Group que introduziu os 3 Vs do big data (depois expandidos para 5 Vs).
 
 
+O ChatGPT disse:
+Você pode acessar o artigo seminal de Doug Laney, intitulado “3D Data Management: Controlling Data Volume, Velocity and Variety”, através do seguinte link:
+
+🔗 http://blogs.gartner.com/doug-laney/files/2012/01/ad949-3D-Data-Management-Controlling-Data-Volume-Velocity-and-Variety.pdf
+
+Este artigo, publicado em fevereiro de 2001 pela META Group (posteriormente adquirida pela Gartner), introduziu o conceito dos 3 Vs do Big Data — Volume, Velocidade e Variedade — que se tornaram fundamentais para a compreensão e gestão de grandes volumes de dados.
+
+O documento está disponível gratuitamente no site oficial de Doug Laney, analista e autor do artigo.
+
+Se precisar de ajuda para interpretar ou aplicar os conceitos apresentados no artigo, estou à disposição para auxiliá-lo.
