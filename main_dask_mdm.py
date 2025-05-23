@@ -105,7 +105,7 @@ def train_model(X_train, y_train, X_test, y_test, preprocessor, output_path):
         logger.info(f"Run ID: {run.info.run_id}")
         # Preparar diretório de saída
         if not output_path:
-            timestamp = datetime.now().strftime("%Y%m%d%H%M")
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M")
             output_path = os.path.join(OUTPUT_PATH, f"artefatos_{timestamp}")
             os.makedirs(output_path, exist_ok=True)
             logger.info(f"Diretório de saída: {output_path}")
@@ -163,7 +163,8 @@ def train_model(X_train, y_train, X_test, y_test, preprocessor, output_path):
         # Logar experimento no MLflow
         logger.info(f"Logando experimento no MLflow: {MLFLOW_TRACKING_URI}")
         experiment_id = run.info.experiment_id
-        log_experiment_mlflow(model, preprocessor, metrics, output_path, log_subruns=True, experiment_name=EXPERIMENT_NAME)
+        # log_experiment_mlflow_com_sub(model, preprocessor, metrics, output_path, log_subruns=True, experiment_name=EXPERIMENT_NAME)
+        log_experiment_mlflow(model, preprocessor, metrics, output_path, experiment_name=EXPERIMENT_NAME)
         mlflow_url = f"{MLFLOW_TRACKING_URI}/#/experiments/{experiment_id}"
         webbrowser.open(mlflow_url)
 
@@ -305,7 +306,7 @@ def plot_feature_importance(model, preprocessor, path):
     plt.yticks(range(len(sorted_idx)), sorted_features)
     plt.xlabel("Importância")
     plt.title("Importância das Features")
-    plt.gca().invert_yaxis()  # Opcional: deixa a feature mais importante no topo
+    plt.gca().invert_yaxis()
     plt.tight_layout()
     plt.savefig(path)
     plt.close()
@@ -331,7 +332,7 @@ def plot_precision_recall(y_true, y_pred, path):
                            plt.title("Curva Precision-Recall"))
 
 
-def log_experiment_mlflow(model, preprocessor, metrics, artifacts_path: str, experiment_name="default", log_subruns=False):
+def log_experiment_mlflow_com_sub(model, preprocessor, metrics, artifacts_path: str, experiment_name="default", log_subruns=False):
     # Garante que está dentro de um run ativo
     active_run = mlflow.active_run()
     if active_run is None:
@@ -395,46 +396,46 @@ def log_experiment_mlflow(model, preprocessor, metrics, artifacts_path: str, exp
     return active_run, active_run.info.run_id, active_run.info.experiment_id
 
 
-# def log_experiment_mlflow(model, preprocessor, metrics, artifacts_path: str, experiment_name="default"):
-#     """
-#     Loga o experimento no MLflow, incluindo métricas, modelo e artefatos.
-#     """
-#     mlflow.set_experiment(experiment_name)
+def log_experiment_mlflow(model, preprocessor, metrics, artifacts_path: str, experiment_name="default"):
+    """
+    Loga o experimento no MLflow, incluindo métricas, modelo e artefatos.
+    """
+    mlflow.set_experiment(experiment_name)
 
-#     with mlflow.start_run():
-#         logger.info("Logando parâmetros e métricas no MLflow...")
+    with mlflow.start_run():
+        logger.info("Logando parâmetros e métricas no MLflow...")
 
-#         # Parâmetros do modelo
-#         for param, value in model.get_params().items():
-#             mlflow.log_param(param, value)
+        # Parâmetros do modelo
+        for param, value in model.get_params().items():
+            mlflow.log_param(param, value)
 
-#         # Métricas principais
-#         mlflow.log_metric("accuracy", metrics["accuracy"])
-#         mlflow.log_metric("f1_score", metrics["f1_score"])
-#         mlflow.log_metric("precision", metrics["precision"])
-#         mlflow.log_metric("recall", metrics["recall"])
+        # Métricas principais
+        mlflow.log_metric("accuracy", metrics["accuracy"])
+        mlflow.log_metric("f1_score", metrics["f1_score"])
+        mlflow.log_metric("precision", metrics["precision"])
+        mlflow.log_metric("recall", metrics["recall"])
 
-#         # Logar modelo
-#         mlflow.sklearn.log_model(model, "model")
-#         mlflow.sklearn.log_model(preprocessor, "preprocessor")
+        # Logar modelo
+        mlflow.sklearn.log_model(model, "model")
+        mlflow.sklearn.log_model(preprocessor, "preprocessor")
 
-#         # Logar artefatos (gráficos e relatório)
-#         artefatos = [
-#             "confusion_matrix.png",
-#             "roc_curve.png",
-#             "precision_recall_curve.png",
-#             f"relatorio_{model.__class__.__name__}.txt",
-#             "model_wrapper.joblib",
-#             "preprocessor.joblib",
-#             "feature_importances.png",
-#         ]
+        # Logar artefatos (gráficos e relatório)
+        artefatos = [
+            "confusion_matrix.png",
+            "roc_curve.png",
+            "precision_recall_curve.png",
+            f"relatorio_{model.__class__.__name__}.txt",
+            "model_wrapper.joblib",
+            "preprocessor.joblib",
+            "feature_importances.png",
+        ]
 
-#         for nome_arquivo in artefatos:
-#             caminho = os.path.join(artifacts_path, nome_arquivo)
-#             if os.path.exists(caminho):
-#                 mlflow.log_artifact(caminho)
+        for nome_arquivo in artefatos:
+            caminho = os.path.join(artifacts_path, nome_arquivo)
+            if os.path.exists(caminho):
+                mlflow.log_artifact(caminho)
 
-#         logger.success("Experimento logado no MLflow com sucesso.")
+        logger.success("Experimento logado no MLflow com sucesso.")
 
 def run_grid_search(
     X_train,
@@ -479,13 +480,21 @@ def run_grid_search(
     }
 
     # Logar no MLflow com subruns
+    # log_experiment_mlflow(
+    #     model=grid,
+    #     preprocessor=preprocessor,
+    #     metrics=metrics,
+    #     artifacts_path=artifacts_path,
+    #     experiment_name=experiment_name,
+    #     log_subruns=True
+    # )
+
     log_experiment_mlflow(
         model=grid,
         preprocessor=preprocessor,
         metrics=metrics,
         artifacts_path=artifacts_path,
         experiment_name=experiment_name,
-        log_subruns=True
     )
 
     logger.success(f"Melhores parâmetros encontrados: {grid.best_params_}")
