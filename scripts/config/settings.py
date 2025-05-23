@@ -29,4 +29,5 @@ S3_SECRET = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 DATASET_S3_PATH = os.getenv("DATASET_S3_PATH", "s3://ppca/mdm/pgfn/processed/base_modelagem_2.parquet")
 
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)

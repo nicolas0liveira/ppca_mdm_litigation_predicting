@@ -1,4 +1,4 @@
-.PHONY: help install_env install pgfn-data start stop clean clean_all clean_env
+.PHONY: help install_env install pgfn-data start start-mdm stop clean clean_all clean_env
 .DEFAULT_GOAL := help
 
 help:
@@ -11,6 +11,7 @@ help:
 	@echo "  clean_all     - remove o container e a imagem Docker"
 	@echo "  clean_env     - remove o ambiente virtual Python"
 	@echo "  pgfn-data     - baixa os dados da PGFN"
+	@echo "  start-mdm     - inicia o container Docker com o MDM"
 
 install_env: clean_env
 	@echo "🔧 Criando ambiente virtual com python3.10"
@@ -57,7 +58,11 @@ pgfn-data:
 	@./venv/bin/python scripts/p01_data/download_pgfn.py
 
 start:
+	@export DATASET_S3_PATH=s3://ppca/mdm/pgfn/processed/dau_so_com9atributos_importantes.parquet && ./venv/bin/python main_dask.py
 	# @./venv/bin/python main_dask.py
+	@echo "🚀 Iniciando"
+
+start-mdm:
 	@./venv/bin/python main_dask_mdm.py
 	@echo "🚀 Iniciando"
 
