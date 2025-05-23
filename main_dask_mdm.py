@@ -14,7 +14,8 @@ import scipy.sparse as sp
 from sklearn.utils import resample
 import numpy as np
 
-TARGET_COL="target"
+# TARGET_COL="target"
+TARGET_COL="TARGET"
 
 from sklearn.compose import ColumnTransformer
 

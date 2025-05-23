@@ -188,3 +188,5 @@ output/
 __pycache__
 reports/**.*
 !reports/.gitkeep
+
+tmp/**.*

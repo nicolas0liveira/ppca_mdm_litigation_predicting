@@ -57,7 +57,9 @@ pgfn-data:
 	@./venv/bin/python scripts/p01_data/download_pgfn.py
 
 start:
-	docker compose -f docker/dask/docker-compose.yml up -d
+	# @./venv/bin/python main_dask.py
+	@./venv/bin/python main_dask_mdm.py
+	@echo "🚀 Iniciando"
 
 stop:
 	docker compose -f docker/dask/docker-compose.yml down
